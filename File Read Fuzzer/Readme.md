@@ -25,7 +25,8 @@ python main.py --mode defaultconfig -u <URL> -p <param> [-w <wordlist>] [-t <tok
 
 ## EXAMPLE
 1. fdbrute
-```python main.py -m fdbrute -u http://api.heal.htb/download -p filename -t eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.73dLFyR_K1A7yY9uDP6xu7H1p_c7DlFQEoN1g-LFFMQ
+```
+python main.py -m fdbrute -u http://api.heal.htb/download -p filename -t eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.73dLFyR_K1A7yY9uDP6xu7H1p_c7DlFQEoN1g-LFFMQ
 ```
 2. filefinder
 ```
