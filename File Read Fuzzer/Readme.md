@@ -21,6 +21,21 @@ python main.py --mode filefinder -u <URL> -p <param> [-f <filename>] [-t <TOKEN>
 ```
 python main.py --mode defaultconfig -u <URL> -p <param> [-w <wordlist>] [-t <token>]
 ```
+---
+
+## EXAMPLE
+1. fdbrute
+```python main.py -m fdbrute -u http://api.heal.htb/download -p filename -t eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.73dLFyR_K1A7yY9uDP6xu7H1p_c7DlFQEoN1g-LFFMQ
+```
+2. filefinder
+```
+python main.py -m filefinder -u http://api.heal.htb/download -p filename -t eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.73dLFyR_K1A7yY9uDP6xu7H1p_c7DlFQEoN1g-LFFMQ -f config.php
+```
+3. defaultconfig
+```
+python main.py -m defaultconfig -u http://api.heal.htb/download -p filename -t eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.73dLFyR_K1A7yY9uDP6xu7H1p_c7DlFQEoN1g-LFFMQ -w wordlist.txt
+```
+
 
 ---
 
